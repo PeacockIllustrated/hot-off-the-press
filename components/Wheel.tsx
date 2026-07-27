@@ -17,10 +17,17 @@ function textFor(tickets: number): string {
   return tickets === 0 ? "#4A433A" : "#E9E4D9";
 }
 
-/** Polar point, degrees measured clockwise from twelve o'clock. */
+/**
+ * Polar point, degrees measured clockwise from twelve o'clock. Rounded to
+ * 2dp so the server and the browser serialise identical attribute strings —
+ * full-precision floats hydrate with a mismatch warning.
+ */
 function pt(cx: number, cy: number, r: number, deg: number) {
   const rad = ((deg - 90) * Math.PI) / 180;
-  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+  return {
+    x: Math.round((cx + r * Math.cos(rad)) * 100) / 100,
+    y: Math.round((cy + r * Math.sin(rad)) * 100) / 100,
+  };
 }
 
 function arcPath(cx: number, cy: number, r: number, a1: number, a2: number) {

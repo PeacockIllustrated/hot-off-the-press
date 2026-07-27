@@ -34,9 +34,13 @@ export default async function FrontPage() {
           {selling ? (
             <div className="grid gap-10 lg:grid-cols-[1fr_26rem]">
               <div>
-                <p className="label text-red mb-4">
-                  Edition {selling.draw_no} · On sale now
-                </p>
+                <div className="flex items-center gap-3 mb-5">
+                  <span aria-hidden className="h-0.5 w-10 flex-none bg-red" />
+                  <p className="label text-red">
+                    Edition {selling.draw_no} · On sale now
+                  </p>
+                  <span aria-hidden className="h-px flex-1 bg-red/40" />
+                </div>
 
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl mb-5">
                   {selling.prize_headline}

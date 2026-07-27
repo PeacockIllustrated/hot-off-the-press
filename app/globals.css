@@ -45,6 +45,23 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /*
+   * The page is printed. A fixed sheet of press grain sits over everything,
+   * multiplied in, at a strength you feel rather than see. It is the one
+   * effect allowed to cross zone boundaries, because the paper does.
+   */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='260'%20height='260'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.82'%20numOctaves='2'%20seed='7'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3C/filter%3E%3Crect%20width='260'%20height='260'%20filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 260px 260px;
+    mix-blend-mode: multiply;
+    opacity: 0.055;
+  }
+
   /* Display type is set tight and heavy, the way a headline is. */
   h1, h2, h3, .display {
     font-family: var(--font-display);
@@ -52,6 +69,7 @@
     letter-spacing: -0.02em;
     line-height: 0.92;
     text-transform: uppercase;
+    text-wrap: balance;
   }
 
   ::selection { background: var(--color-red); color: var(--color-paper); }
@@ -78,6 +96,33 @@
 }
 
 @layer components {
+  /* Zones -------------------------------------------------------------
+   * Every section of a page declares the stock it is printed on. Reading
+   * matter lives on paper; the promise runs in red; the broadcast happens
+   * at night. Zones own their background AND their default ink.
+   */
+  .zone-paper { background: var(--color-paper); color: var(--color-ink); }
+  .zone-deep  { background: var(--color-paper-deep); color: var(--color-ink); }
+  .zone-red   { background: var(--color-red); color: var(--color-paper); }
+  .zone-ink   { background: var(--color-ink); color: var(--color-paper); }
+  .zone-night { background: var(--color-night); color: var(--color-phosphor); }
+
+  /* Rules --------------------------------------------------------------
+   * The furniture of a printed page. `rule-heavy` is the classic
+   * thick-and-thin cut-off rule that opens a new story; `rule-thin` is a
+   * hairline between related matter.
+   */
+  .rule-thin { border-top: 1px solid var(--color-rule); }
+
+  .rule-heavy {
+    background-image:
+      linear-gradient(var(--color-ink), var(--color-ink)),
+      linear-gradient(var(--color-ink), var(--color-ink));
+    background-repeat: no-repeat;
+    background-size: 100% 4px, 100% 1px;
+    background-position: 0 0, 0 7px;
+  }
+
   /* Halftone lives in its own band. It never sits behind reading matter. */
   .halftone {
     background-image: radial-gradient(var(--color-ink) 1px, transparent 1.6px);
@@ -90,13 +135,16 @@
     opacity: 0.12;
   }
 
+  /* Cards are always printed on paper stock, whatever zone they sit in. */
   .card {
     background: var(--color-paper);
+    color: var(--color-ink);
     border: 2px solid var(--color-ink);
     box-shadow: 5px 5px 0 var(--color-ink);
   }
   .card-flat {
     background: var(--color-paper);
+    color: var(--color-ink);
     border: 2px solid var(--color-ink);
   }
 
@@ -139,6 +187,17 @@
     color: var(--color-ink);
   }
   .field::placeholder { color: var(--color-ink-faint); }
+
+  /* A strip of column bars, the way a back page carries a barcode. */
+  .barcode {
+    background-image: repeating-linear-gradient(
+      to right,
+      currentColor 0 2px, transparent 2px 5px,
+      currentColor 5px 6px, transparent 6px 8px,
+      currentColor 8px 11px, transparent 11px 13px,
+      currentColor 13px 14px, transparent 14px 18px
+    );
+  }
 
   /* Broadcast furniture ---------------------------------------------- */
 
@@ -231,9 +290,101 @@
   .pop-in { animation: pop-in 260ms ease-out both; }
 
   .col-rule { border-left: 1px solid var(--color-rule); }
+
+  /* The splash --------------------------------------------------------
+   * The nameplate is struck onto an ink sheet, a red rule is drawn under
+   * it, and the sheet is pulled off the top of the stack. Once a session.
+   * A head script sets data-splash="seen" before first paint on repeat
+   * visits, so the sheet never flashes when it is not wanted.
+   */
+  #hotp-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--color-ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.75rem;
+    overflow: hidden;
+  }
+  [data-splash="seen"] #hotp-splash { display: none; }
+
+  #hotp-splash .splash-mark {
+    width: min(78vw, 34rem);
+    height: auto;
+  }
+
+  #hotp-splash .stamp {
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: stamp 460ms cubic-bezier(.2, 1.6, .35, 1) forwards;
+  }
+
+  @keyframes stamp {
+    0%   { opacity: 0; transform: scale(1.55); }
+    55%  { opacity: 1; transform: scale(0.955); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* The red rule is drawn left to right like a stroke of the pen. */
+  #hotp-splash .splash-rule {
+    width: min(60vw, 24rem);
+    height: 5px;
+    background: var(--color-red);
+    transform: scaleX(0);
+    transform-origin: left center;
+    animation: rule-draw 420ms cubic-bezier(.6, 0, .2, 1) 1050ms forwards;
+  }
+  @keyframes rule-draw { to { transform: scaleX(1); } }
+
+  #hotp-splash .splash-tag {
+    color: var(--color-paper);
+    opacity: 0;
+    animation: tag-in 500ms ease-out 1300ms forwards;
+  }
+  @keyframes tag-in {
+    from { opacity: 0; letter-spacing: 0.5em; }
+    to   { opacity: 0.72; letter-spacing: 0.3em; }
+  }
+
+  #hotp-splash .splash-skip {
+    position: absolute;
+    bottom: max(1.25rem, env(safe-area-inset-bottom));
+    right: 1.5rem;
+    color: var(--color-paper);
+    opacity: 0.45;
+    transition: opacity 120ms ease;
+  }
+  #hotp-splash .splash-skip:hover { opacity: 1; }
+
+  /* The finished sheet leaves upward, off the stack. */
+  #hotp-splash.splash-exit {
+    animation: splash-exit 460ms cubic-bezier(.7, 0, .3, 1) forwards;
+  }
+  @keyframes splash-exit {
+    to { transform: translateY(-102%); }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ball-drop, .lamp-on, .pop-in { animation: none !important; }
   .btn { transition: none; }
+
+  /* The splash resolves instantly: everything on, then a plain fade out. */
+  #hotp-splash .stamp,
+  #hotp-splash .splash-rule,
+  #hotp-splash .splash-tag {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+  #hotp-splash .splash-tag { opacity: 0.72; }
+  #hotp-splash.splash-exit {
+    animation: none !important;
+    opacity: 0;
+    transition: opacity 260ms ease-out;
+  }
 }

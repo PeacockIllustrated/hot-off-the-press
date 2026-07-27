@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Masthead from "@/components/Masthead";
 import SiteFooter from "@/components/SiteFooter";
+import Splash from "@/components/Splash";
 import { getSession } from "@/lib/session";
 
 /*
@@ -69,8 +70,21 @@ export default async function RootLayout({
     <html
       lang="en-GB"
       className={`${archivo.variable} ${sourceSerif.variable} ${courier.variable}`}
+      suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col">
+        {/*
+         * Runs before the splash markup below is parsed: a repeat visit in
+         * this session marks <html> as seen, and the CSS hides the splash
+         * before it can flash. React never renders this attribute, hence
+         * suppressHydrationWarning on <html>.
+         */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{sessionStorage.getItem("hotp-splash-seen")==="1"&&document.documentElement.setAttribute("data-splash","seen")}catch(e){}`,
+          }}
+        />
+        <Splash />
         <Masthead session={session} />
         <main className="flex-1">{children}</main>
         <SiteFooter />

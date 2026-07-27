@@ -31,6 +31,7 @@ export default async function AccountPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
+      <p className="label text-red mb-3">Your ledger</p>
       <h1 className="text-4xl mb-2">My numbers</h1>
       <p className="text-ink-soft mb-9">{session.display_name}</p>
 

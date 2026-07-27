@@ -35,41 +35,48 @@ export default async function Masthead({
 
   return (
     <header>
-      {/* Ink band ------------------------------------------------------ */}
+      {/* The ear — the small print that runs above a nameplate ---------- */}
+      <div className="bg-paper border-b border-ink/30">
+        <div className="max-w-6xl mx-auto px-4 py-2.5 flex items-center justify-between gap-4">
+          <p className="label text-ink-soft">
+            {ukDate(state?.server_time ?? new Date().toISOString())}
+          </p>
+          <p className="label text-ink-soft hidden md:block">
+            A real drum · on camera · every number printed
+          </p>
+          <p className="label text-ink">
+            {selling
+              ? `Edition ${selling.draw_no} · ${gbp(selling.ticket_price_pence)} a ticket`
+              : "No edition on sale"}
+          </p>
+        </div>
+      </div>
+
+      {/* The nameplate -------------------------------------------------- */}
       <div className="bg-ink text-paper relative overflow-hidden">
         <div
           aria-hidden
           className="halftone absolute inset-0 pointer-events-none"
           style={{ opacity: 0.1 }}
         />
-        <div className="relative max-w-6xl mx-auto px-4 py-5 flex items-center justify-between gap-6">
-          <Link href="/" className="block shrink-0">
+        <div className="relative max-w-6xl mx-auto px-4 py-6 sm:py-8 flex justify-center">
+          <Link href="/" className="block">
             <Image
               src="/brand/hotp-long-white.webp"
-              alt="Hot Off The Press"
+              alt="Hot Off The Press — front page"
               width={389}
               height={120}
-              className="h-11 sm:h-14 w-auto"
+              priority
+              className="h-14 sm:h-20 w-auto"
             />
           </Link>
-
-          <div className="hidden md:block text-right">
-            <p className="label text-paper/70">
-              {ukDate(state?.server_time ?? new Date().toISOString())}
-            </p>
-            <p className="label mt-2 text-paper">
-              {selling
-                ? `Edition ${selling.draw_no} on sale · ${gbp(selling.ticket_price_pence)} a ticket`
-                : "No edition on sale"}
-            </p>
-          </div>
         </div>
       </div>
 
-      {/* Red rule ------------------------------------------------------ */}
+      {/* Red rule ------------------------------------------------------- */}
       <div className="h-1.5 bg-red" />
 
-      {/* Nav ----------------------------------------------------------- */}
+      {/* Nav ------------------------------------------------------------ */}
       <div className="bg-paper-deep border-b-2 border-ink">
         <div className="max-w-6xl mx-auto px-4 flex flex-wrap items-center justify-between">
           <div className="border-l-2 border-ink">
@@ -97,7 +104,7 @@ export default async function Masthead({
         </div>
       </div>
 
-      {/* Live strip ---------------------------------------------------- */}
+      {/* Live strip ----------------------------------------------------- */}
       {live && (
         <Link
           href="/live"
