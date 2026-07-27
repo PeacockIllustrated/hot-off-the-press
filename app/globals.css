@@ -1,0 +1,239 @@
+@import "tailwindcss";
+
+@theme {
+  /* Newsprint: warm, never white. */
+  --color-paper:        #E9E4D9;
+  --color-paper-deep:   #DCD5C6;
+  --color-paper-shadow: #CBC2AF;
+
+  /* Ink: warm heavy black, not #000. */
+  --color-ink:       #16130F;
+  --color-ink-soft:  #4A433A;
+  --color-ink-faint: #7E7566;
+
+  /* Tabloid red. */
+  --color-red:      #C8102E;
+  --color-red-deep: #8F0A20;
+
+  /* Broadcast zone. */
+  --color-night:    #100E0C;
+  --color-night-2:  #1C1815;
+  --color-bakelite: #2A231C;
+  --color-bezel:    #C9BFA9;
+  --color-lamp:     #FF3B2F;
+  --color-phosphor: #EFE7D2;
+
+  --color-rule: #A99F8D;
+
+  --font-display: var(--font-archivo), "Arial Black", sans-serif;
+  --font-serif:   var(--font-source-serif), Georgia, serif;
+  --font-mono:    var(--font-courier), "Courier New", monospace;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    background: var(--color-paper);
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Display type is set tight and heavy, the way a headline is. */
+  h1, h2, h3, .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 0.92;
+    text-transform: uppercase;
+  }
+
+  ::selection { background: var(--color-red); color: var(--color-paper); }
+
+  :focus-visible {
+    outline: 3px solid var(--color-red);
+    outline-offset: 2px;
+  }
+}
+
+@utility num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+@utility label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.6875rem;
+  line-height: 1;
+  font-weight: 700;
+}
+
+@layer components {
+  /* Halftone lives in its own band. It never sits behind reading matter. */
+  .halftone {
+    background-image: radial-gradient(var(--color-ink) 1px, transparent 1.6px);
+    background-size: 6px 6px;
+    opacity: 0.16;
+  }
+  .halftone-fine {
+    background-image: radial-gradient(var(--color-ink) 0.8px, transparent 1.3px);
+    background-size: 4px 4px;
+    opacity: 0.12;
+  }
+
+  .card {
+    background: var(--color-paper);
+    border: 2px solid var(--color-ink);
+    box-shadow: 5px 5px 0 var(--color-ink);
+  }
+  .card-flat {
+    background: var(--color-paper);
+    border: 2px solid var(--color-ink);
+  }
+
+  .btn {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    border: 2px solid var(--color-ink);
+    padding: 0.7rem 1.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: transform 90ms ease, box-shadow 90ms ease, background 90ms ease;
+    box-shadow: 4px 4px 0 var(--color-ink);
+    line-height: 1;
+  }
+  .btn:hover:not(:disabled) { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--color-ink); }
+  .btn:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--color-ink); }
+  .btn:disabled { opacity: 0.42; cursor: not-allowed; box-shadow: 2px 2px 0 var(--color-ink); }
+
+  .btn-red   { background: var(--color-red); color: var(--color-paper); }
+  .btn-ink   { background: var(--color-ink); color: var(--color-paper); }
+  .btn-paper { background: var(--color-paper); color: var(--color-ink); }
+
+  .btn-light {
+    border-color: var(--color-bezel);
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.6);
+    background: var(--color-bezel);
+    color: var(--color-ink);
+  }
+
+  .field {
+    background: var(--color-paper);
+    border: 2px solid var(--color-ink);
+    padding: 0.6rem 0.75rem;
+    font-family: var(--font-mono);
+    width: 100%;
+    color: var(--color-ink);
+  }
+  .field::placeholder { color: var(--color-ink-faint); }
+
+  /* Broadcast furniture ---------------------------------------------- */
+
+  .tv-shell {
+    background: linear-gradient(160deg, #3A3127 0%, #2A231C 42%, #1E1913 100%);
+    border-radius: 22px;
+    box-shadow:
+      inset 0 2px 0 rgba(255,255,255,0.10),
+      inset 0 -3px 0 rgba(0,0,0,0.55),
+      0 18px 40px rgba(0,0,0,0.45);
+  }
+
+  .tv-screen {
+    background: #070906;
+    border-radius: 14px;
+    box-shadow:
+      inset 0 0 0 3px #0C0A08,
+      inset 0 0 44px rgba(0,0,0,0.95),
+      0 0 0 6px #191410;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Scanlines sit over picture, never over reading matter. */
+  .scanlines::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.20) 0px,
+      rgba(0,0,0,0.20) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+  .vignette::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background: radial-gradient(ellipse at center, transparent 54%, rgba(0,0,0,0.70) 100%);
+  }
+
+  .grille {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      #16120E 0px, #16120E 2px,
+      #3A3128 2px, #3A3128 5px
+    );
+    border-radius: 4px;
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.8);
+  }
+
+  .knob {
+    background: radial-gradient(circle at 34% 30%, #6A5C4B 0%, #3A3128 55%, #221C16 100%);
+    border-radius: 999px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.20), 0 2px 4px rgba(0,0,0,0.6);
+  }
+
+  .lamp-on {
+    background: var(--color-lamp);
+    box-shadow: 0 0 10px 2px rgba(255,59,47,0.85), inset 0 -2px 3px rgba(0,0,0,0.4);
+    animation: lamp 2.4s ease-in-out infinite;
+  }
+  .lamp-off {
+    background: #4A2320;
+    box-shadow: inset 0 -2px 3px rgba(0,0,0,0.5);
+  }
+  @keyframes lamp {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.62; }
+  }
+
+  @keyframes ball-drop {
+    0%   { transform: translateY(-40px) scale(0.78); opacity: 0; }
+    58%  { transform: translateY(4px)   scale(1.08); opacity: 1; }
+    78%  { transform: translateY(-2px)  scale(0.99); }
+    100% { transform: translateY(0)     scale(1); opacity: 1; }
+  }
+  .ball-drop { animation: ball-drop 620ms cubic-bezier(.2,.8,.3,1.2) both; }
+
+  @keyframes pop-in {
+    0%   { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1);   opacity: 1; }
+  }
+  .pop-in { animation: pop-in 260ms ease-out both; }
+
+  .col-rule { border-left: 1px solid var(--color-rule); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ball-drop, .lamp-on, .pop-in { animation: none !important; }
+  .btn { transition: none; }
+}
