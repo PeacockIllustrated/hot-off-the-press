@@ -3,6 +3,7 @@ import Image from "next/image";
 import NavLinks from "./NavLinks";
 import { logoutAction } from "@/lib/actions";
 import type { Session } from "@/lib/session";
+import { DB_CONFIGURED } from "@/lib/config";
 import { rpc } from "@/lib/db";
 import type { PublicState } from "@/lib/types";
 import { gbp, ukDate } from "@/lib/format";
@@ -103,6 +104,16 @@ export default async function Masthead({
           </div>
         </div>
       </div>
+
+      {/* Preview notice ------------------------------------------------- */}
+      {!DB_CONFIGURED && (
+        <div className="bg-paper border-b-2 border-ink">
+          <p className="max-w-6xl mx-auto px-4 py-2 label text-ink-soft">
+            Preview edition — sample data, no database connected. The demo
+            sign-ins, buying and the drum all work; nothing is kept.
+          </p>
+        </div>
+      )}
 
       {/* Live strip ----------------------------------------------------- */}
       {live && (

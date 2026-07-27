@@ -1,20 +1,24 @@
 import "server-only";
 
-import { APP_SECRET, SUPABASE_ANON_KEY, SUPABASE_URL } from "./config";
+import {
+  APP_SECRET,
+  DB_CONFIGURED,
+  SUPABASE_ANON_KEY,
+  SUPABASE_URL,
+} from "./config";
+import { demoRpc } from "./demo";
+import { HotpError } from "./errors";
+
+export { HotpError };
 
 /**
  * Every call goes through a SECURITY DEFINER function in Postgres, gated by
  * HOTP_APP_SECRET. The anon key never reaches the browser and on its own is
  * not enough to mint a ticket or turn the wheel.
+ *
+ * With no database configured at all, calls are answered by the built-in
+ * preview dataset instead (lib/demo.ts), so the build stays viewable.
  */
-export class HotpError extends Error {
-  code: string;
-  constructor(code: string, message: string) {
-    super(message);
-    this.name = "HotpError";
-    this.code = code;
-  }
-}
 
 function splitPgMessage(raw: string): { code: string; message: string } {
   const m = /^(HOTP_[A-Z_]+):\s*([\s\S]*)$/.exec(raw ?? "");
@@ -26,12 +30,7 @@ export async function rpc<T>(
   fn: string,
   args: Record<string, unknown> = {},
 ): Promise<T> {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !APP_SECRET) {
-    throw new HotpError(
-      "HOTP_NOT_CONFIGURED",
-      "The database connection is not configured. Set SUPABASE_URL, SUPABASE_ANON_KEY and HOTP_APP_SECRET.",
-    );
-  }
+  if (!DB_CONFIGURED) return demoRpc<T>(fn, args);
 
   let res: Response;
   try {

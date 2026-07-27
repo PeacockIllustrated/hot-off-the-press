@@ -19,11 +19,24 @@ const SEEN_KEY = "hotp-splash-seen";
 const HOLD_MS = 2150;
 const REDUCED_HOLD_MS = 900;
 const EXIT_MS = 480;
+/* Keep in sync with the splash-failsafe delay + duration in globals.css. */
+const FAILSAFE_MS = 4500;
 
 export default function Splash() {
   const [phase, setPhase] = useState<"showing" | "leaving" | "gone">("showing");
   const leaving = useRef(false);
   const exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mountedAt = useRef<number | null>(null);
+
+  /*
+   * The data-splash attribute display:nones the sheet, so it must only be
+   * set once the exit has finished — setting it inside leave() would hide
+   * the sheet before the pull-away animation could render a frame.
+   */
+  const finish = useCallback(() => {
+    document.documentElement.setAttribute("data-splash", "seen");
+    setPhase("gone");
+  }, []);
 
   const leave = useCallback(() => {
     if (leaving.current) return;
@@ -33,12 +46,22 @@ export default function Splash() {
     } catch {
       /* private mode: the splash simply runs again next time */
     }
-    document.documentElement.setAttribute("data-splash", "seen");
+    // Past the CSS failsafe the sheet has already faded itself out;
+    // animating an exit now would flash it back into view.
+    const late =
+      mountedAt.current !== null &&
+      Date.now() - mountedAt.current > FAILSAFE_MS;
+    if (late) {
+      finish();
+      return;
+    }
     setPhase("leaving");
-    exitTimer.current = setTimeout(() => setPhase("gone"), EXIT_MS);
-  }, []);
+    exitTimer.current = setTimeout(finish, EXIT_MS);
+  }, [finish]);
 
   useEffect(() => {
+    mountedAt.current = Date.now();
+
     let seen = false;
     try {
       seen = sessionStorage.getItem(SEEN_KEY) === "1";
@@ -68,13 +91,27 @@ export default function Splash() {
     };
   }, [leave]);
 
-  // The page behind the sheet does not scroll until the sheet has gone.
+  /*
+   * While the sheet is up it is the page: everything behind it is inert —
+   * unfocusable and hidden from screen readers — and the body cannot
+   * scroll. Both restore the moment the sheet has gone.
+   */
   useEffect(() => {
     if (phase === "gone") return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const made: HTMLElement[] = [];
+    for (const el of Array.from(document.body.children)) {
+      if (!(el instanceof HTMLElement)) continue;
+      if (el.id === "hotp-splash" || el.tagName === "SCRIPT") continue;
+      if (!el.inert) {
+        el.inert = true;
+        made.push(el);
+      }
+    }
     return () => {
       document.body.style.overflow = prev;
+      for (const el of made) el.inert = false;
     };
   }, [phase]);
 

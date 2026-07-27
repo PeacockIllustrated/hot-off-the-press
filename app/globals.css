@@ -95,6 +95,11 @@
   font-weight: 700;
 }
 
+/* A hairline column rule, as an @utility so md:col-rule et al generate. */
+@utility col-rule {
+  border-left: 1px solid var(--color-rule);
+}
+
 @layer components {
   /* Zones -------------------------------------------------------------
    * Every section of a page declares the stock it is printed on. Reading
@@ -289,7 +294,9 @@
   }
   .pop-in { animation: pop-in 260ms ease-out both; }
 
-  .col-rule { border-left: 1px solid var(--color-rule); }
+  /* pop-in and ball-drop stay above; .col-rule is an @utility (below) so
+     variants like md:col-rule generate — a components-layer class gets no
+     variants from Tailwind. */
 
   /* The splash --------------------------------------------------------
    * The nameplate is struck onto an ink sheet, a red rule is drawn under
@@ -308,6 +315,17 @@
     justify-content: center;
     gap: 1.75rem;
     overflow: hidden;
+    /*
+     * Failsafe: dismissal normally comes from JavaScript, so if the bundle
+     * never arrives the sheet fades itself away rather than covering the
+     * site forever. The JS exit replaces this animation when it runs first,
+     * and Splash.tsx skips its exit choreography once this has fired
+     * (FAILSAFE_MS there matches the 4s delay + 500ms duration here).
+     */
+    animation: splash-failsafe 500ms ease-out 4s forwards;
+  }
+  @keyframes splash-failsafe {
+    to { opacity: 0; visibility: hidden; }
   }
   [data-splash="seen"] #hotp-splash { display: none; }
 
@@ -350,15 +368,21 @@
     to   { opacity: 0.72; letter-spacing: 0.3em; }
   }
 
+  /*
+   * 0.6 keeps the label above AA contrast on ink; anything dimmer also
+   * dims the focus outline below visibility, because element opacity
+   * applies to the outline too. Focus brings it to full strength.
+   */
   #hotp-splash .splash-skip {
     position: absolute;
     bottom: max(1.25rem, env(safe-area-inset-bottom));
     right: 1.5rem;
     color: var(--color-paper);
-    opacity: 0.45;
+    opacity: 0.6;
     transition: opacity 120ms ease;
   }
-  #hotp-splash .splash-skip:hover { opacity: 1; }
+  #hotp-splash .splash-skip:hover,
+  #hotp-splash .splash-skip:focus-visible { opacity: 1; }
 
   /* The finished sheet leaves upward, off the stack. */
   #hotp-splash.splash-exit {

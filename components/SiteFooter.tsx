@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { DB_CONFIGURED } from "@/lib/config";
 
 export default function SiteFooter() {
   return (
@@ -46,7 +47,9 @@ export default function SiteFooter() {
         <div className="border-t border-paper/20">
           <div className="max-w-6xl mx-auto px-4 py-4 flex flex-wrap gap-x-6 gap-y-2 items-center justify-between">
             <p className="label text-paper/50">
-              Prototype build — no real money is taken
+              {DB_CONFIGURED
+                ? "Prototype build — no real money is taken"
+                : "Preview edition — sample data, no database connected"}
             </p>
             <div aria-hidden className="barcode h-6 w-28 text-paper/35" />
             <p className="label text-paper/50">Hot Off The Press</p>
