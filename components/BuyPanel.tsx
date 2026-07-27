@@ -30,7 +30,7 @@ export default function BuyPanel({
   if (state.result) {
     const r = state.result;
     return (
-      <div className="card p-6 pop-in">
+      <div className="card p-6 sm:p-8 pop-in">
         <p className="label text-red mb-3">Tickets issued</p>
         <h3 className="text-3xl mb-4">
           {r.quantity} number{r.quantity > 1 ? "s" : ""} are yours
@@ -68,7 +68,7 @@ export default function BuyPanel({
   }
 
   return (
-    <form action={formAction} className="card p-6">
+    <form action={formAction} className="card p-6 sm:p-8">
       <input type="hidden" name="draw_id" value={draw.id} />
       <input type="hidden" name="quantity" value={quantity} />
       <input type="hidden" name="question_id" value={question?.id ?? ""} />

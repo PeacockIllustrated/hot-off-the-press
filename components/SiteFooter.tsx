@@ -8,13 +8,13 @@ export default function SiteFooter() {
       <div className="h-1.5 bg-red" />
       <div className="bg-ink text-paper">
         {/* Colophon ----------------------------------------------------- */}
-        <div className="max-w-6xl mx-auto px-4 py-12 text-center">
+        <div className="max-w-6xl mx-auto px-4 py-16 text-center">
           <Image
             src="/brand/hotp-long-white.webp"
             alt="Hot Off The Press"
             width={389}
             height={120}
-            className="h-12 w-auto mx-auto mb-6"
+            className="h-12 w-auto mx-auto mb-8"
           />
 
           <p className="text-sm leading-relaxed text-paper/85 max-w-xl mx-auto">
@@ -27,7 +27,7 @@ export default function SiteFooter() {
             same chance as a paid ticket. Over 18s only. Please play sensibly.
           </p>
 
-          <nav className="flex flex-wrap justify-center gap-x-7 gap-y-3 mt-8">
+          <nav className="flex flex-wrap justify-center gap-x-8 gap-y-3 mt-10">
             <Link href="/how-it-works" className="label hover:text-red">
               How the draw works
             </Link>
@@ -51,7 +51,14 @@ export default function SiteFooter() {
                 ? "Prototype build — no real money is taken"
                 : "Preview edition — sample data, no database connected"}
             </p>
-            <div aria-hidden className="barcode h-6 w-28 text-paper/35" />
+            <div aria-hidden className="flex items-center gap-4 text-paper/35">
+              {/* Registration mark, the printer's signature. */}
+              <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none">
+                <circle cx="12" cy="12" r="6.5" stroke="currentColor" />
+                <path d="M12 1v22M1 12h22" stroke="currentColor" />
+              </svg>
+              <div className="barcode h-6 w-28" />
+            </div>
             <p className="label text-paper/50">Hot Off The Press</p>
           </div>
         </div>

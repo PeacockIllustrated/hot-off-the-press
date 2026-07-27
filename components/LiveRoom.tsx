@@ -8,6 +8,7 @@ import CaptionStrip from "./CaptionStrip";
 import YourNumbers from "./YourNumbers";
 import Wheel from "./Wheel";
 import Countdown from "./Countdown";
+import Tear from "./Tear";
 import { gbp, pad, thousands, ukTime } from "@/lib/format";
 import type { Draw, LiveState, Wheel as WheelType } from "@/lib/types";
 
@@ -86,8 +87,12 @@ export default function LiveRoom({
   return (
     <>
       {/* Broadcast zone ------------------------------------------------- */}
-      <section className="zone-night border-b-4 border-ink">
-        <div className="max-w-6xl mx-auto px-4 py-8 lg:py-10">
+      <section className="zone-night relative overflow-hidden">
+        <div
+          aria-hidden
+          className="dot-shade absolute -right-24 -top-24 w-96 h-96 text-phosphor opacity-10 pointer-events-none"
+        />
+        <div className="relative max-w-6xl mx-auto px-4 py-10 lg:py-14">
           <div className="grid gap-8 lg:grid-cols-[1fr_20rem]">
             <div className="min-w-0">
               <div className="flex items-center gap-3 mb-4 flex-wrap">
@@ -225,9 +230,11 @@ export default function LiveRoom({
         </div>
       </section>
 
+      <Tear from="night" to="paper" />
+
       {/* Your numbers ---------------------------------------------------- */}
       <section className="zone-paper">
-        <div className="max-w-6xl mx-auto px-4 py-10">
+        <div className="max-w-6xl mx-auto px-4 py-14">
           <YourNumbers
             tickets={state.my_tickets}
             attempt={current}

@@ -14,8 +14,8 @@ export default async function DrawsPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
-      <p className="label text-red mb-3">The record</p>
-      <h1 className="text-4xl mb-3">Past draws</h1>
+      <p className="kicker label text-red mb-5">The record</p>
+      <h1 className="text-4xl mb-4">Past draws</h1>
       <p className="text-ink-soft max-w-2xl mb-10 leading-relaxed">
         Every edition, every winning number, and every void attempt along the
         way. Recordings are kept because they are the record — if a result is

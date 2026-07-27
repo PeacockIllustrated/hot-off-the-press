@@ -1,6 +1,7 @@
 import Link from "next/link";
 import BuyPanel from "@/components/BuyPanel";
 import Countdown from "@/components/Countdown";
+import Tear from "@/components/Tear";
 import { rpc } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { gbp, pad, thousands, ukDateTime } from "@/lib/format";
@@ -29,12 +30,16 @@ export default async function FrontPage() {
   return (
     <>
       {/* Hero ----------------------------------------------------------- */}
-      <section className="zone-paper border-b-4 border-ink">
-        <div className="max-w-6xl mx-auto px-4 py-10 lg:py-14">
+      <section className="zone-paper relative">
+        <div
+          aria-hidden
+          className="dot-shade-linear absolute inset-x-0 top-0 h-28 text-ink opacity-15 pointer-events-none"
+        />
+        <div className="relative max-w-6xl mx-auto px-4 py-14 lg:py-20">
           {selling ? (
-            <div className="grid gap-10 lg:grid-cols-[1fr_26rem]">
+            <div className="grid gap-12 lg:grid-cols-[1fr_26rem] lg:gap-16">
               <div>
-                <div className="flex items-center gap-3 mb-5">
+                <div className="flex items-center gap-3 mb-7">
                   <span aria-hidden className="h-0.5 w-10 flex-none bg-red" />
                   <p className="label text-red">
                     Edition {selling.draw_no} · On sale now
@@ -42,17 +47,17 @@ export default async function FrontPage() {
                   <span aria-hidden className="h-px flex-1 bg-red/40" />
                 </div>
 
-                <h1 className="text-5xl sm:text-6xl lg:text-7xl mb-5">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl mb-6">
                   {selling.prize_headline}
                 </h1>
 
                 {selling.prize_detail && (
-                  <p className="text-lg leading-relaxed max-w-xl mb-7">
+                  <p className="text-lg leading-relaxed max-w-xl mb-9">
                     {selling.prize_detail}
                   </p>
                 )}
 
-                <div className="mb-8">
+                <div className="mb-10">
                   <p className="label text-ink-soft mb-3">
                     Sales close on server time
                   </p>
@@ -109,14 +114,15 @@ export default async function FrontPage() {
         </div>
       </section>
 
+      <Tear from="paper" to="red" />
+
       {/* The promise ---------------------------------------------------- */}
-      <section className="zone-red border-b-4 border-ink relative overflow-hidden">
+      <section className="zone-red relative overflow-hidden">
         <div
           aria-hidden
-          className="halftone absolute inset-0 pointer-events-none"
-          style={{ opacity: 0.12 }}
+          className="dot-shade absolute -right-20 -top-20 w-96 h-96 text-paper opacity-25 pointer-events-none"
         />
-        <div className="relative max-w-6xl mx-auto px-4 py-8">
+        <div className="relative max-w-6xl mx-auto px-4 py-12">
           <p className="display text-2xl sm:text-3xl leading-tight max-w-4xl">
             You are buying for the next edition, not the one on screen. Sales
             close on our clock, in the open, before the drum turns.
@@ -124,11 +130,13 @@ export default async function FrontPage() {
         </div>
       </section>
 
+      <Tear from="red" to="deep" />
+
       {/* How it works --------------------------------------------------- */}
-      <section className="zone-deep border-b-4 border-ink">
-        <div className="max-w-6xl mx-auto px-4 py-12">
-          <h2 className="text-3xl mb-8">Three things, and no small print</h2>
-          <div className="grid gap-8 md:grid-cols-3">
+      <section className="zone-deep">
+        <div className="max-w-6xl mx-auto px-4 py-16">
+          <h2 className="text-3xl mb-10">Three things, and no small print</h2>
+          <div className="grid gap-10 md:grid-cols-3">
             <article>
               <p className="num text-4xl font-bold text-red mb-3">01</p>
               <h3 className="text-xl mb-3">A real drum, in a real unit</h3>
@@ -158,7 +166,7 @@ export default async function FrontPage() {
             </article>
           </div>
 
-          <Link href="/how-it-works" className="btn btn-ink mt-9">
+          <Link href="/how-it-works" className="btn btn-ink mt-12">
             Read the whole method
           </Link>
         </div>
@@ -166,8 +174,14 @@ export default async function FrontPage() {
 
       {/* Live now ------------------------------------------------------- */}
       {state.live && (
-        <section className="zone-night border-b-4 border-ink">
-          <div className="max-w-6xl mx-auto px-4 py-10 flex flex-wrap items-center justify-between gap-6">
+        <>
+          <Tear from="deep" to="night" />
+          <section className="zone-night relative overflow-hidden">
+            <div
+              aria-hidden
+              className="dot-shade absolute -left-24 -bottom-24 w-80 h-80 text-phosphor opacity-15 pointer-events-none"
+            />
+            <div className="relative max-w-6xl mx-auto px-4 py-14 flex flex-wrap items-center justify-between gap-8">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <span aria-hidden className="w-3 h-3 rounded-full lamp-on" />
@@ -184,27 +198,31 @@ export default async function FrontPage() {
             <Link href="/live" className="btn btn-light">
               Watch the draw
             </Link>
-          </div>
-        </section>
+            </div>
+          </section>
+          <Tear from="night" to="paper" />
+        </>
       )}
+
+      {!state.live && <Tear from="deep" to="paper" />}
 
       {/* Past winners --------------------------------------------------- */}
       {state.past.length > 0 && (
         <section className="zone-paper">
-          <div className="max-w-6xl mx-auto px-4 py-12">
-            <div className="flex items-baseline justify-between gap-4 mb-7 flex-wrap">
+          <div className="max-w-6xl mx-auto px-4 py-16">
+            <div className="flex items-baseline justify-between gap-4 mb-9 flex-wrap">
               <h2 className="text-3xl">Already drawn</h2>
               <Link href="/draws" className="label underline">
                 All past editions
               </Link>
             </div>
 
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {state.past.slice(0, 3).map((d) => (
                 <Link
                   key={d.id}
                   href={`/draws/${d.draw_no}`}
-                  className="card-flat p-5 hover:bg-paper-deep transition-colors"
+                  className="card-flat p-6 hover:bg-paper-deep transition-colors"
                 >
                   <p className="label text-ink-soft mb-2">
                     Edition {d.draw_no}

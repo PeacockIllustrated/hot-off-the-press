@@ -25,9 +25,10 @@
 
   --color-rule: #A99F8D;
 
-  --font-display: var(--font-archivo), "Arial Black", sans-serif;
-  --font-serif:   var(--font-source-serif), Georgia, serif;
-  --font-mono:    var(--font-courier), "Courier New", monospace;
+  --font-headline: var(--font-ultra), "Ultra", Georgia, serif;
+  --font-display:  var(--font-archivo), "Arial Black", sans-serif;
+  --font-serif:    var(--font-source-serif), Georgia, serif;
+  --font-mono:     var(--font-courier), "Courier New", monospace;
 }
 
 @layer base {
@@ -62,8 +63,28 @@
     opacity: 0.055;
   }
 
-  /* Display type is set tight and heavy, the way a headline is. */
-  h1, h2, h3, .display {
+  /*
+   * Two registers of display type. Headlines (h1, h2) are set in Ultra —
+   * a fat-face poster serif, sentence case, printed through the ink-rough
+   * filter so the edges sit in the paper fibre. Furniture (h3, .display,
+   * buttons) stays in heavy industrial caps.
+   */
+  h1, h2 {
+    font-family: var(--font-headline);
+    font-weight: 400;
+    letter-spacing: 0.005em;
+    line-height: 1.08;
+    text-wrap: balance;
+    filter: url(#ink-rough);
+  }
+
+  /* A hair of red out of register under the biggest ink, like a press
+     whose plates don't quite agree. */
+  h1 {
+    text-shadow: 0.035em 0.04em 0 color-mix(in srgb, var(--color-red) 32%, transparent);
+  }
+
+  h3, .display {
     font-family: var(--font-display);
     font-weight: 400;
     letter-spacing: -0.02em;
@@ -98,6 +119,21 @@
 /* A hairline column rule, as an @utility so md:col-rule et al generate. */
 @utility col-rule {
   border-left: 1px solid var(--color-rule);
+}
+
+/* The standard kicker: a short red dash, then the small print. */
+@utility kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  &::before {
+    content: "";
+    width: 2.5rem;
+    height: 3px;
+    flex: none;
+    background: var(--color-red);
+  }
 }
 
 @layer components {
@@ -138,6 +174,40 @@
     background-image: radial-gradient(var(--color-ink) 0.8px, transparent 1.3px);
     background-size: 4px 4px;
     opacity: 0.12;
+  }
+
+  /*
+   * Benday shading — the polkadot screen of a printed picture. Dots take
+   * currentColor; the mask fades them off so a field of dots dissolves
+   * into the stock instead of ending at an edge. Decoration only, always
+   * aria-hidden, never behind reading matter.
+   */
+  .dot-shade {
+    background-image: radial-gradient(currentColor 1.7px, transparent 2.4px);
+    background-size: 12px 12px;
+    -webkit-mask-image: radial-gradient(closest-side, #000 20%, transparent 100%);
+    mask-image: radial-gradient(closest-side, #000 20%, transparent 100%);
+  }
+  .dot-shade-linear {
+    background-image: radial-gradient(currentColor 1.7px, transparent 2.4px);
+    background-size: 12px 12px;
+    -webkit-mask-image: linear-gradient(to bottom, #000, transparent);
+    mask-image: linear-gradient(to bottom, #000, transparent);
+  }
+
+  /*
+   * The torn edge between two stocks. The element carries the colour of
+   * the sheet biting in; the mask tears its top edge. Repeat width 360px,
+   * endpoints matched so the seam doesn't show.
+   */
+  .tear {
+    height: 16px;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='16'%3E%3Cpath d='M0 16 V9 L7 12 L15 5 L24 11 L32 6 L41 13 L49 7 L57 12 L66 4 L74 10 L83 3 L91 11 L100 8 L109 14 L117 6 L125 10 L134 4 L143 12 L151 8 L159 13 L168 5 L177 9 L185 3 L194 11 L203 7 L211 12 L220 5 L229 10 L237 4 L246 12 L254 8 L263 13 L271 6 L280 11 L288 4 L297 10 L306 7 L314 12 L323 5 L331 9 L340 4 L348 11 L354 6 L360 9 V16 Z' fill='%23000'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='16'%3E%3Cpath d='M0 16 V9 L7 12 L15 5 L24 11 L32 6 L41 13 L49 7 L57 12 L66 4 L74 10 L83 3 L91 11 L100 8 L109 14 L117 6 L125 10 L134 4 L143 12 L151 8 L159 13 L168 5 L177 9 L185 3 L194 11 L203 7 L211 12 L220 5 L229 10 L237 4 L246 12 L254 8 L263 13 L271 6 L280 11 L288 4 L297 10 L306 7 L314 12 L323 5 L331 9 L340 4 L348 11 L354 6 L360 9 V16 Z' fill='%23000'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+    -webkit-mask-size: 360px 16px;
+    mask-size: 360px 16px;
   }
 
   /* Cards are always printed on paper stock, whatever zone they sit in. */

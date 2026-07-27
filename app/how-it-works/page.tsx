@@ -1,3 +1,4 @@
+import Tear from "@/components/Tear";
 import { rpc } from "@/lib/db";
 import { gbp, thousands } from "@/lib/format";
 import type { PublicState } from "@/lib/types";
@@ -24,14 +25,14 @@ export default async function HowItWorksPage() {
 
   return (
     <>
-      <section className="zone-ink border-b-4 border-ink relative overflow-hidden">
+      <section className="zone-ink relative overflow-hidden">
         <div
           aria-hidden
-          className="halftone absolute inset-0 pointer-events-none"
-          style={{ opacity: 0.08 }}
+          className="dot-shade absolute -right-24 -top-24 w-96 h-96 text-paper opacity-15 pointer-events-none"
         />
-        <div className="relative max-w-3xl mx-auto px-4 py-14">
-          <h1 className="text-5xl mb-5">How it works</h1>
+        <div className="relative max-w-3xl mx-auto px-4 py-16 lg:py-20">
+          <p className="kicker label text-paper/75 mb-5">The method</p>
+          <h1 className="text-4xl sm:text-5xl mb-6">How it works</h1>
           <p className="text-lg text-paper/80 leading-relaxed">
             The arithmetic is published because it has to be checkable. If any
             of the below is ever not true of a draw, that draw is void.
@@ -39,7 +40,9 @@ export default async function HowItWorksPage() {
         </div>
       </section>
 
-      <div className="max-w-3xl mx-auto px-4 py-12 space-y-14">
+      <Tear from="ink" to="paper" />
+
+      <div className="max-w-3xl mx-auto px-4 py-14 space-y-16">
         {/* The draw ---------------------------------------------------- */}
         <section>
           <h2 className="text-3xl mb-5">The drum decides, not a computer</h2>

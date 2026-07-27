@@ -60,7 +60,7 @@ export default async function Masthead({
           className="halftone absolute inset-0 pointer-events-none"
           style={{ opacity: 0.1 }}
         />
-        <div className="relative max-w-6xl mx-auto px-4 py-6 sm:py-8 flex justify-center">
+        <div className="relative max-w-6xl mx-auto px-4 py-8 sm:py-11 flex justify-center">
           <Link href="/" className="block">
             <Image
               src="/brand/hotp-long-white.webp"

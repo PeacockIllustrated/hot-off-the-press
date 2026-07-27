@@ -10,8 +10,8 @@ export default async function SignInPage(props: PageProps<"/sign-in">) {
   const target = typeof next === "string" ? next : "/";
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <div className="grid gap-10 lg:grid-cols-2 max-w-4xl">
+    <div className="max-w-6xl mx-auto px-4 py-14">
+      <div className="grid gap-12 lg:grid-cols-2 max-w-4xl">
         <div>
           <h1 className="text-4xl mb-5">Sign in</h1>
           <p className="text-ink-soft leading-relaxed mb-8">

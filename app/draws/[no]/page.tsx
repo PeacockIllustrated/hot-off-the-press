@@ -31,8 +31,8 @@ export default async function DrawDetailPage(props: PageProps<"/draws/[no]">) {
         ← All past draws
       </Link>
 
-      <p className="label text-red mt-7 mb-3">Edition {draw.draw_no}</p>
-      <h1 className="text-4xl sm:text-5xl mb-4">{draw.prize_headline}</h1>
+      <p className="kicker label text-red mt-9 mb-5">Edition {draw.draw_no}</p>
+      <h1 className="text-4xl sm:text-5xl mb-5">{draw.prize_headline}</h1>
       {draw.prize_detail && (
         <p className="text-lg text-ink-soft max-w-2xl mb-8 leading-relaxed">
           {draw.prize_detail}
