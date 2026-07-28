@@ -16,7 +16,7 @@ import BrandMark from "./BrandMark";
  */
 
 const SEEN_KEY = "hotp-splash-seen";
-const HOLD_MS = 2150;
+const HOLD_MS = 3050;
 const REDUCED_HOLD_MS = 900;
 const EXIT_MS = 480;
 /* Keep in sync with the splash-failsafe delay + duration in globals.css. */
@@ -129,12 +129,7 @@ export default function Splash() {
         <style>{`#hotp-splash{display:none}`}</style>
       </noscript>
 
-      <BrandMark
-        tone="paper"
-        animated
-        idPrefix="hotp-splash-mark"
-        className="splash-mark"
-      />
+      <BrandMark animated className="splash-mark" />
 
       <div className="splash-rule" aria-hidden />
 

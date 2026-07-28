@@ -141,7 +141,7 @@ function initialState(): DemoState {
         draw_no: 13,
         draw_title: "Edition Thirteen",
         quantity: 60,
-        total_pence: 12000,
+        total_pence: 6000,
         created_at: hours(-24 * 5),
       },
     ],
@@ -169,6 +169,7 @@ const baseDraw = {
   prize_detail: null,
   stream_url: null,
   recording_url: null,
+  prize_image_url: null as string | null,
   giveaway_cap_pct: "5.0",
   spins_per_ticket: 1,
   created_at: hours(-24 * 30),
@@ -181,11 +182,12 @@ function sellingDraw(): Draw {
     id: "demo-14",
     draw_no: 14,
     title: "Edition Fourteen",
-    prize_headline: "£2,500 in used twenties",
+    prize_headline: "A 65-inch OLED television",
     prize_detail:
-      "Handed over on camera, counted twice, in a briefcase you can keep. No vouchers, no site credit — the actual notes.",
-    prize_value_pence: 250000,
-    ticket_price_pence: 250,
+      "This year's set, boxed and sealed, handed over on camera. Delivered to your door or collected from the unit — winner's choice.",
+    prize_value_pence: 149900,
+    prize_image_url: "/prizes/tv.jpg",
+    ticket_price_pence: 100,
     ticket_cap: 9999,
     digit_count: 4,
     status: "selling",
@@ -208,9 +210,10 @@ function liveDraw(): Draw {
     id: "demo-13",
     draw_no: 13,
     title: "Edition Thirteen",
-    prize_headline: "A week's wages, doubled",
-    prize_value_pence: 180000,
-    ticket_price_pence: 200,
+    prize_headline: "This year's flagship phone",
+    prize_value_pence: 99900,
+    prize_image_url: "/prizes/phone.jpg",
+    ticket_price_pence: 100,
     ticket_cap: 9999,
     digit_count: 4,
     status: s.ed13.status,
@@ -234,12 +237,17 @@ function pastDraws(): Draw[] {
     title: `Edition ${n === 12 ? "Twelve" : n === 11 ? "Eleven" : "Ten"}`,
     prize_headline:
       n === 12
-        ? "A grand and a half, cash"
+        ? "A next-gen games console"
         : n === 11
-          ? "The seaside, all in"
-          : "£1,000 on the counter",
-    prize_value_pence: [150000, 120000, 100000][i],
-    ticket_price_pence: 200,
+          ? "A proper espresso machine"
+          : "Studio headphones, sealed",
+    prize_value_pence: [44900, 37900, 24900][i],
+    prize_image_url: [
+      "/prizes/console.jpg",
+      "/prizes/espresso.jpg",
+      "/prizes/headphones.jpg",
+    ][i],
+    ticket_price_pence: [100, 50, 50][i],
     ticket_cap: 9999,
     digit_count: 4,
     status: "complete" as const,

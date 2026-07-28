@@ -22,6 +22,8 @@ export type Draw = {
   draw_at: string;
   stream_url: string | null;
   recording_url: string | null;
+  /** Optional press photograph/plate of the prize, e.g. /prizes/tv.jpg. */
+  prize_image_url?: string | null;
   winning_number: number | null;
   giveaway_cap_pct: string;
   spins_per_ticket: number;

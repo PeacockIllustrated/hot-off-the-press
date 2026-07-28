@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { rpc } from "@/lib/db";
@@ -37,6 +38,25 @@ export default async function DrawDetailPage(props: PageProps<"/draws/[no]">) {
         <p className="text-lg text-ink-soft max-w-2xl mb-8 leading-relaxed">
           {draw.prize_detail}
         </p>
+      )}
+
+      {draw.prize_image_url && (
+        <figure className="max-w-2xl mb-10">
+          <div className="press-photo border-2 border-ink">
+            <div className="relative aspect-[16/9]">
+              <Image
+                src={draw.prize_image_url}
+                alt={draw.prize_headline}
+                fill
+                sizes="(min-width: 1024px) 42rem, 100vw"
+                className="object-cover"
+              />
+            </div>
+          </div>
+          <figcaption className="label text-ink-soft mt-3">
+            The prize, as published before sales opened
+          </figcaption>
+        </figure>
       )}
 
       {/* Result -------------------------------------------------------- */}

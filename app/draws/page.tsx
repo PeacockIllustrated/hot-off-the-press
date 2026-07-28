@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { rpc } from "@/lib/db";
 import { gbp, pad, thousands, ukDate } from "@/lib/format";
@@ -32,7 +33,20 @@ export default async function DrawsPage() {
               href={`/draws/${d.draw_no}`}
               className="card-flat block hover:bg-paper-deep transition-colors"
             >
-              <div className="p-5 sm:p-6 grid gap-5 sm:grid-cols-[1fr_auto] items-center">
+              <div className="p-5 sm:p-6 grid gap-5 sm:grid-cols-[auto_1fr_auto] items-center">
+                {d.prize_image_url && (
+                  <div className="press-photo border-2 border-ink hidden sm:block">
+                    <div className="relative w-36 h-24">
+                      <Image
+                        src={d.prize_image_url}
+                        alt=""
+                        fill
+                        sizes="9rem"
+                        className="object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
                 <div>
                   <p className="label text-ink-soft mb-2">
                     Edition {d.draw_no} · {ukDate(d.draw_at)}

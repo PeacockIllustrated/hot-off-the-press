@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import BuyPanel from "@/components/BuyPanel";
 import Countdown from "@/components/Countdown";
@@ -52,9 +53,28 @@ export default async function FrontPage() {
                 </h1>
 
                 {selling.prize_detail && (
-                  <p className="text-lg leading-relaxed max-w-xl mb-9">
+                  <p className="text-lg leading-relaxed max-w-xl mb-8">
                     {selling.prize_detail}
                   </p>
+                )}
+
+                {selling.prize_image_url && (
+                  <figure className="max-w-xl mb-10">
+                    <div className="press-photo border-2 border-ink">
+                      <div className="relative aspect-[16/10]">
+                        <Image
+                          src={selling.prize_image_url}
+                          alt={selling.prize_headline}
+                          fill
+                          sizes="(min-width: 1024px) 36rem, 100vw"
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                    <figcaption className="label text-ink-soft mt-3">
+                      The prize — pictured before a single ticket is sold
+                    </figcaption>
+                  </figure>
                 )}
 
                 <div className="mb-10">
@@ -222,8 +242,21 @@ export default async function FrontPage() {
                 <Link
                   key={d.id}
                   href={`/draws/${d.draw_no}`}
-                  className="card-flat p-6 hover:bg-paper-deep transition-colors"
+                  className="card-flat hover:bg-paper-deep transition-colors overflow-hidden p-6"
                 >
+                  {d.prize_image_url && (
+                    <div className="press-photo border-b-2 border-ink -mx-6 -mt-6 mb-5">
+                      <div className="relative aspect-[16/8]">
+                        <Image
+                          src={d.prize_image_url}
+                          alt=""
+                          fill
+                          sizes="(min-width: 1024px) 24rem, 100vw"
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
                   <p className="label text-ink-soft mb-2">
                     Edition {d.draw_no}
                   </p>

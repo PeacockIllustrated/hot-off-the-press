@@ -1,108 +1,146 @@
 /**
- * The nameplate, drawn rather than photographed: the same HOT | OFF THE |
- * PRESS lockup as the raster logo, rebuilt as SVG so it can be printed at any
- * size and animated. A turbulence filter bites speckles out of the letters
- * and roughens their edges, the way ink sits on newsprint.
+ * The nameplate, built from the actual brand artwork: every cell of the
+ * lockup is a live crop of /public/brand/hotp-long-white.webp (389×120),
+ * so the splash letterforms are pixel-identical to the logo everywhere
+ * else on the site.
  *
- * `animated` staggers the three pieces of the lockup with the `stamp`
- * keyframe (defined in globals.css) — each part struck onto the page in turn.
+ * Animated, it plays as a slot machine: each big letter is a reel — other
+ * letters from the same artwork whip past and the reel lands on the right
+ * one, left to right — and then the OFF|THE column drops onto the lockup
+ * from above. Crop boxes were measured from the file by alpha projection.
  */
+
+const SRC = "/brand/hotp-long-white.webp";
+const W = 389;
+const H = 120;
+/** Sprite pitch inside a reel: cell height plus a small gap. */
+const PITCH = 130;
+
+/** Measured x-bounds of each glyph in the artwork. */
+const GLYPH: Record<string, [number, number]> = {
+  H: [1, 48],
+  O: [50, 96],
+  T: [97, 142],
+  P: [184, 227],
+  R: [228, 271],
+  E: [272, 308],
+  S: [309, 348],
+  S2: [349, 388],
+};
+const COLUMN: [number, number] = [149, 174];
+
+/** The reels, left to right, each with the decoys that spin past first. */
+const REELS: { target: string; decoys: string[] }[] = [
+  { target: "H", decoys: ["P", "S", "O", "E", "R"] },
+  { target: "O", decoys: ["T", "R", "S", "H", "P"] },
+  { target: "T", decoys: ["E", "H", "P", "S", "O"] },
+  { target: "P", decoys: ["S", "O", "R", "T", "E"] },
+  { target: "R", decoys: ["H", "E", "T", "P", "S"] },
+  { target: "E", decoys: ["O", "P", "S", "R", "H"] },
+  { target: "S", decoys: ["R", "T", "E", "O", "P"] },
+  { target: "S2", decoys: ["P", "H", "O", "S", "T"] },
+];
+
+/** One cropped view of the artwork, placed at (x, y) in lockup space. */
+function Sprite({
+  glyph,
+  x,
+  y,
+  width,
+}: {
+  glyph: [number, number];
+  x: number;
+  y: number;
+  width: number;
+}) {
+  const [a, b] = glyph;
+  return (
+    <svg
+      x={x}
+      y={y}
+      width={width}
+      height={H}
+      viewBox={`${a} 0 ${b - a + 1} ${H}`}
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <image href={SRC} width={W} height={H} />
+    </svg>
+  );
+}
+
 export default function BrandMark({
-  tone = "paper",
   animated = false,
-  idPrefix = "hotp-mark",
   className,
 }: {
-  tone?: "paper" | "ink";
   animated?: boolean;
-  idPrefix?: string;
   className?: string;
 }) {
-  const fill = tone === "paper" ? "var(--color-paper)" : "var(--color-ink)";
-  const filterId = `${idPrefix}-ink`;
+  const [colA, colB] = COLUMN;
 
-  const wordProps = {
-    fontFamily: "var(--font-display)",
-    fontSize: 172,
-    lengthAdjust: "spacingAndGlyphs" as const,
-    fill,
-  };
-  const smallProps = {
-    fontFamily: "var(--font-display)",
-    fontSize: 48,
-    textAnchor: "middle" as const,
-    lengthAdjust: "spacingAndGlyphs" as const,
-    fill,
-  };
-
-  const stamp = (delayMs: number) =>
-    animated
-      ? { className: "stamp", style: { animationDelay: `${delayMs}ms` } }
-      : {};
+  if (!animated) {
+    return (
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        role="img"
+        aria-label="Hot Off The Press"
+        className={className}
+      >
+        <image href={SRC} width={W} height={H} />
+      </svg>
+    );
+  }
 
   return (
     <svg
-      viewBox="0 0 880 150"
+      viewBox={`0 0 ${W} ${H}`}
       role="img"
       aria-label="Hot Off The Press"
       className={className}
     >
       <defs>
-        <filter id={filterId} x="-4%" y="-12%" width="108%" height="124%">
-          {/* Fine bright speckle, thresholded, bitten out of the letters. */}
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.9"
-            numOctaves="2"
-            seed="8"
-            result="speck"
-          />
-          <feColorMatrix
-            in="speck"
-            type="matrix"
-            values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.9 0.9 0 0 -0.92"
-            result="speckA"
-          />
-          <feComposite
-            in="SourceGraphic"
-            in2="speckA"
-            operator="out"
-            result="bitten"
-          />
-          {/* Then the edges are warped a touch, like ink spread on fibre. */}
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.05 0.09"
-            numOctaves="2"
-            seed="3"
-            result="warp"
-          />
-          <feDisplacementMap in="bitten" in2="warp" scale="2.6" />
-        </filter>
+        {REELS.map((reel, i) => {
+          const [a, b] = GLYPH[reel.target];
+          return (
+            <clipPath key={i} id={`hotp-reel-clip-${i}`}>
+              <rect x={a} y={0} width={b - a + 1} height={H} />
+            </clipPath>
+          );
+        })}
       </defs>
 
-      <g filter={`url(#${filterId})`}>
-        <g {...stamp(80)}>
-          <text {...wordProps} x="0" y="138" textLength="300">
-            HOT
-          </text>
-        </g>
+      {REELS.map((reel, i) => {
+        const [a, b] = GLYPH[reel.target];
+        const width = b - a + 1;
+        return (
+          <g key={i} clipPath={`url(#hotp-reel-clip-${i})`}>
+            <g
+              className="reel"
+              style={{
+                ["--reel-dur" as string]: `${820 + i * 110}ms`,
+                ["--reel-delay" as string]: `${i * 40}ms`,
+              }}
+            >
+              {/* One decoy above the target fills the overshoot bounce… */}
+              <Sprite glyph={GLYPH[reel.decoys[4]]} x={a} y={-PITCH} width={width} />
+              <Sprite glyph={GLYPH[reel.target]} x={a} y={0} width={width} />
+              {/* …and the rest queue below, whipping past first. */}
+              {reel.decoys.slice(0, 4).map((d, k) => (
+                <Sprite
+                  key={k}
+                  glyph={GLYPH[d]}
+                  x={a}
+                  y={(k + 1) * PITCH}
+                  width={width}
+                />
+              ))}
+            </g>
+          </g>
+        );
+      })}
 
-        <g {...stamp(320)}>
-          <text {...smallProps} x="352" y="76" textLength="80">
-            OFF
-          </text>
-          <text {...smallProps} x="352" y="132" textLength="80">
-            THE
-          </text>
-          <rect x="400" y="16" width="13" height="124" fill={fill} />
-        </g>
-
-        <g {...stamp(560)}>
-          <text {...wordProps} x="432" y="138" textLength="448">
-            PRESS
-          </text>
-        </g>
+      {/* The OFF|THE column drops onto the lockup once the reels settle. */}
+      <g className="col-drop">
+        <Sprite glyph={COLUMN} x={colA} y={0} width={colB - colA + 1} />
       </g>
     </svg>
   );
